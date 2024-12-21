@@ -70,6 +70,6 @@
      "Name": "MammaMia",
      "Icon": "🍕️",
      "Public_Instance": "0",
-     "Global_Proxy": "0"
+     "Global_Proxy": "https://proxy.steveceltis.workers.dev/"
      }
 }
