@@ -4,7 +4,7 @@
              "domain": "family",
              "SC_ForwardProxy": "0",
              "SC_PROXY": "0",
-             "enabled": "1"
+             "enabled": "0"
          },
          "Filmpertutti": {
              "domain": "app",
