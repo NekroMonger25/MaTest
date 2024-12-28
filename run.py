@@ -22,6 +22,7 @@ from slowapi.util import get_remote_address
 from slowapi.middleware import SlowAPIMiddleware
 from static.static import HTML
 from urllib.parse import unquote
+from Src.Utilities.m3u8 import router as m3u8_clone
 #Configure Env Vars
 Global_Proxy = config.Global_Proxy
 if Global_Proxy == "1":
@@ -54,11 +55,13 @@ PORT = int(config.PORT)
 Icon = config.Icon
 Name = config.Name
 SKY_DOMAIN = config.SKY_DOMAIN
+Remote_Instance = config.Remote_Instance
     #Cool code to set the hugging face if the service is hosted there.
 if MYSTERIUS == "1":
     from Src.API.cool import cool
 DDL_DOMAIN = config.DDL_DOMAIN
 app = FastAPI()
+app.include_router(m3u8_clone)
 limiter = Limiter(key_func=get_remote_address)
 app.state.limiter = limiter
 app.add_middleware(SlowAPIMiddleware)
@@ -120,6 +123,7 @@ def manifest():
 def root(request: Request):
     forwarded_proto = request.headers.get("x-forwarded-proto")
     scheme = forwarded_proto if forwarded_proto else request.url.scheme
+    global instance_url
     instance_url = f"{scheme}://{request.url.netloc}"
     html_content = HTML.replace("{instance_url}", instance_url)
     return html_content
@@ -292,9 +296,12 @@ async def addon_stream(request: Request,config, type, id,):
                     url_streaming_community,url_720_streaming_community,quality_sc, slug_sc = await streaming_community(id,client,SC_FAST_SEARCH)
                     if url_streaming_community is not None:
                         print(f"StreamingCommunity Found Results for {id}")
+                        if Remote_Instance == "1":
+                            from urllib.parse import quote
+                            url_streaming_community = instance_url + "/clone/manifest.m3u8?d=" + quote(url_streaming_community)
+                            print(url_streaming_community)
                         if quality_sc == "1080":
                             streams['streams'].append({"name":f'{Name}\n1080p Max', 'title': f'{Icon}StreamingCommunity\n {slug_sc.replace("-"," ").capitalize()}','url': url_streaming_community,'behaviorHints': {'proxyHeaders': {"request": {"User-Agent": User_Agent, "Referer": f"https://streamingcommunity.{SC_DOMAIN}","Host": "vixcloud.co", "Sec-Fetch-Dest": "iframe", "Sec-Fetch-Mode": "navigate", "Sec-Fetch-Site": "cross-site"}}, 'notWebReady': True, 'bingeGroup': 'streamingcommunity1080'}})
-                            streams['streams'].append({"name": f'{Name}\n1080p Max 2', 'title': f'{Icon}StreamingCommunity\n {slug_sc.replace("-", " ").capitalize()}', 'url': "https://lorempizza-test1.hf.space/clone/manifest.m3u8?d=https%3A//vixcloud.co/playlist/249230.m3u8%3Ftoken%3D1b4c975f7ce2cc1089a6d520a596fb26%26expires%3D1740523211", 'behaviorHints': {'proxyHeaders': {"request": {"Host": "lorempizza-test1.hf.space", "User-Agent": "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:127.0) Gecko/20100101 Firefox/127.0", "Accept": "*/*", "Accept-Language": "en-US,en;q=0.5", "Accept-Encoding": "gzip, deflate, br, zstd", "Origin": "https://livepush.io", "DNT": "1", "Sec-GPC": "1", "Connection": "keep-alive", "Referer": "https://livepush.io/", "Sec-Fetch-Dest": "empty", "Sec-Fetch-Mode": "cors", "Sec-Fetch-Site": "cross-site", "Pragma": "no-cache", "Cache-Control": "no-cache", "TE": "trailers"}}, 'notWebReady': True, 'bingeGroup': 'streamingcommunity1080'}})
 
                         else:
                             streams['streams'].append({"name":f'{Name}\n{quality} Max', 'title': f'{Icon}StreamingCommunity\n {slug_sc.replace("-"," ").capitalize()}','url': url_streaming_community,'behaviorHints': {'proxyHeaders': {"request": {"User-Agent": User_Agent, "Referer": f"https://streamingcommunity.{SC_DOMAIN}","Host": "vixcloud.co", "Sec-Fetch-Dest": "iframe", "Sec-Fetch-Mode": "navigate", "Sec-Fetch-Site": "cross-site"}}, 'notWebReady': True, 'bingeGroup': f'streamingcommunity{quality}'}})
