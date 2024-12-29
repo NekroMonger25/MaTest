@@ -51,7 +51,7 @@
         "GuardaHD":{
             "domain":"stream",
             "enabled":"1",
-            "GH_ForwardProxy":"1",
+            "GH_ForwardProxy":"0",
             "GH_PROXY":"0"
         },
         "AnimeWorld":{
