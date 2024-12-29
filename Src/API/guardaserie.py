@@ -68,7 +68,8 @@ async def get_supervideo_link(link,client):
 async def search(clean_id,client):
     try:
         headers = random_headers.generate()
-        response = await client.get(ForwardProxy + f'https://guardaserie.{GS_DOMAIN}/?story={clean_id}&do=search&subaction=search', allow_redirects=True, impersonate = "chrome124", headers = headers, proxies = proxies)
+        # response = await client.get(ForwardProxy + f'https://guardaserie.{GS_DOMAIN}/?story={clean_id}&do=search&subaction=search', allow_redirects=True, impersonate = "chrome124", headers = headers, proxies = proxies)
+        response = await client.get(ForwardProxy + f'https://guardaproxy.steveceltis.workers.dev/?story={clean_id}&do=search&subaction=search', allow_redirects=True, impersonate = "chrome124", headers = headers, proxies = proxies)
         print("Response1",response)
         soup = BeautifulSoup(response.text,'lxml',parse_only=SoupStrainer('div',class_="mlnh-2"))
         div_mlnh2 = soup.select_one('div.mlnh-2:nth-of-type(2)')
