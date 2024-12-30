@@ -32,6 +32,7 @@ async def clone2_m3u8(d:str,token:str,expires:str,h:str = None, b:str = None):
             m3u8 = m3u8 + f'&h={h}'
         if b:
             m3u8 = m3u8 + f'&b={b}'
+        
         m3u8_content = await fetch_m3u8(m3u8)
         return Response(content=m3u8_content, media_type='application/vnd.apple.mpegurl')
     except Exception as e:
