@@ -129,6 +129,8 @@ async def search_movie(showname,date,client):
         headers['Referer'] = f'https://cb01new.{CB_DOMAIN}/'
         query = f'https://cb01new.{CB_DOMAIN}/?s={showname}'
         response = await client.get(query,headers=headers, impersonate = "chrome124")
+        if response.status_code != 200:
+            print(f"CB01 Failed to fetch search results: {response.status_code}")
         soup = BeautifulSoup(response.text, 'lxml',parse_only=SoupStrainer('div', class_='card-content'))
         cards = soup.find_all('div', class_='card-content')
         year_pattern = re.compile(r'(19|20)\d{2}')
@@ -144,7 +146,6 @@ async def search_movie(showname,date,client):
             if match:
                 year = match.group(0)
                 if year == date :  # Check if the year is 2011
-                    print(f"Link: {href}")
                     return href
     except Exception as e:
         print(f'MammaMia: Error in search_series cb01: {e}')
@@ -157,6 +158,8 @@ async def search_series(showname,date,client):
         headers['Referer'] = f'https://cb01new.{CB_DOMAIN}/serietv/'
         query = f'https://cb01new.{CB_DOMAIN}/serietv/?s={showname}'
         response = await client.get(query,headers=headers,impersonate = "chrome124")
+        if response.status_code != 200:
+            print(f"CB01 Failed to fetch search results: {response.status_code}")
         soup = BeautifulSoup(response.text, 'lxml',parse_only=SoupStrainer('div', class_='card-content'))
         cards = soup.find_all('div', class_='card-content')
         year_pattern = re.compile(r'(19|20)\d{2}')
@@ -174,7 +177,6 @@ async def search_series(showname,date,client):
                 if match:
                     year = match.group(0)
                     if year == date :  # Check if the year is 2011
-                        print(f"Link: {href}")
                         return href
     except Exception as e:
         print(f'MammaMia: Error in search_series cb01: {e}')
@@ -189,7 +191,6 @@ async def movie_redirect_url(link,client,MFP):
             if "stayonline" in redirect_url:
                 mixdrop_real_link = await get_stayonline(redirect_url,client)
                 final_url = await get_true_link_mixdrop(mixdrop_real_link,client,MFP)
-                print(final_url)
                 return final_url
         except Exception as e:    
             redirect_url = soup.find("div", id="iframen1").get("data-src")
@@ -197,7 +198,6 @@ async def movie_redirect_url(link,client,MFP):
                     maxstream_link =await get_stayonline(maxstream_link,client)
             maxstream_real_link = await get_uprot(maxstream_link,client)
             final_url = await get_true_link_maxstream(maxstream_real_link,client) 
-            print(final_url)
             return(final_url)
 
         return redirect_url
@@ -268,7 +268,6 @@ async def cb01(id,client,MFP):
             episode = general[3]
             link = await search_series(showname,date,client)
             final_url = await series_redirect_url(link,season,episode,client,MFP)
-            print(final_url)
             return final_url
         elif ismovie == 1:
             season = None
@@ -302,9 +301,10 @@ async def test_animeworld():
     from curl_cffi.requests import AsyncSession
     async with AsyncSession() as client:
         # Replace with actual id, for example 'anime_id:episode' format
-        test_id = "tt0413573:19:1"  # This is an example ID format
+        test_id = "tt14948432"  # This is an example ID format
         MFP = "1"
         results = await cb01(test_id, client,MFP)
+        print(results)
 
 if __name__ == "__main__":
     import asyncio

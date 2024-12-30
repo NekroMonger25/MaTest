@@ -4,6 +4,7 @@ from bs4 import BeautifulSoup, SoupStrainer
 from Src.Utilities.info import get_info_imdb, is_movie, get_info_tmdb
 import urllib.parse
 import Src.Utilities.config as config
+import urllib.parse
 DDL_DOMAIN = config.DDL_DOMAIN
 ips4_device_key = config.ips4_device_key
 ips4_login_key = config.ips4_login_key
@@ -18,7 +19,7 @@ cookies = {
 
 async def search_series(client,id,season,episode,showname):
     showname = showname.replace(" ", "%20").replace("–", "+").replace("—","+")
-    response = await client.get(f"https://ddlstreamitaly.{DDL_DOMAIN}/search/?&q={showname}%20{season}%20Streaming&type=videobox_video&quick=1&nodes=11&search_and_or=and&search_in=titles&sortby=relevancy")
+    response = await client.get(f"https://ddlstreamitaly.{DDL_DOMAIN}/search/?&q={showname}%20{season}%20Streaming&type=videobox_video&quick=1&nodes=11,36&search_and_or=and&search_in=titles&sortby=relevancy")
     soup = BeautifulSoup(response.text, 'lxml',parse_only=SoupStrainer('a'))
     a_tags = soup.find_all('a', {'data-linktype': 'link'})
     for a in a_tags:
@@ -74,9 +75,9 @@ async def get_episode(client,link,episode):
     return mp4_link
 
 async def search_movie(client,showname,id):
-    showname = showname.replace(" ", "%20").replace("–", "+").replace("—","+")
-    showname = urllib.parse.quote_plus(showname)
-    link = f"https://ddlstreamitaly.{DDL_DOMAIN}/search/?&q={showname}%20Streaming&quick=1&nodes=11&search_and_or=and&search_in=titles&sortby=relevancy"
+    showname = showname.replace("–", "+").replace("—","+")
+    showname = urllib.parse.quote(showname)
+    link = f"https://ddlstreamitaly.{DDL_DOMAIN}/search/?&q={showname}%20Streaming&quick=1&nodes=11&search_and_or=and&search_in=titles&sortby=relevancy"    
     response = await client.get(link,impersonate = "chrome120")
     soup = BeautifulSoup(response.text, 'lxml',parse_only=SoupStrainer('a'))
     a_tags = soup.find_all('a', {'data-linktype': 'link'})
@@ -144,11 +145,11 @@ async def ddlstream(imdb,client):
         print(f"MammaMia: DDLStream Failed {e}")
         return None
     
-'''
+
 async def test_animeworld():
     from curl_cffi.requests import AsyncSession
     async with AsyncSession() as client:
-        test_id = "tt6263850"  # This is an example ID format
+        test_id = "tt14948432"  # This is an example ID format
         results = await ddlstream(test_id, client)
         print(results)
 
@@ -158,4 +159,3 @@ if __name__ == "__main__":
 
 
     #python3 -m Src.API.ddlstream
-'''

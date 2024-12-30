@@ -208,6 +208,13 @@ HTML = """
                 </label>
             </div>
             <div class="provider-group">
+                <label for="animeworld" class="provider-label">
+                    <input type="checkbox" id="animeworld"> Animeworld
+                </label>
+            </div>
+            <p>To use the following provider you need to have a local instance/ set the proxy enviroment variable... Leave it as it is if you do not know what this is about
+            </p>
+            <div class="provider-group">
                 <label for="guardaserie" class="provider-label">
                     <input type="checkbox" id="guardaserie"> Guardaserie
                 </label>
@@ -217,13 +224,6 @@ HTML = """
                     <input type="checkbox" id="guardahd"> GuardaHD
                 </label>
             </div>
-            <div class="provider-group">
-                <label for="animeworld" class="provider-label">
-                    <input type="checkbox" id="animeworld"> Animeworld
-                </label>
-            </div>
-            <p>To use the following provider you need to have a local instance/ set the proxy enviroment variable... Leave it as it is if you do not know what this is about
-            </p>
             <div class="provider-group">
                 <label for="tantifilm" class="provider-label">
                     <input type="checkbox" id="tantifilm"> Tantifilm

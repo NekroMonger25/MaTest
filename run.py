@@ -123,7 +123,6 @@ def manifest():
 def root(request: Request):
     forwarded_proto = request.headers.get("x-forwarded-proto")
     scheme = forwarded_proto if forwarded_proto else request.url.scheme
-    global instance_url
     instance_url = f"{scheme}://{request.url.netloc}"
     html_content = HTML.replace("{instance_url}", instance_url)
     return html_content
@@ -298,10 +297,13 @@ async def addon_stream(request: Request,config, type, id,):
                         print(f"StreamingCommunity Found Results for {id}")
                         if Remote_Instance == "1":
                             from urllib.parse import quote
-                            url_streaming_community = instance_url + "/clone/manifest.m3u8?d=" + quote(url_streaming_community)
-                            print(url_streaming_community)
+                            forwarded_proto = request.headers.get("x-forwarded-proto")
+                            scheme = forwarded_proto if forwarded_proto else request.url.scheme
+                            instance_url = f"{scheme}://{request.url.netloc}"
+                            url_streaming_community = url_streaming_community.replace("?","&")
+                            url_streaming_community = instance_url + "/vixcloud/manifest.m3u8?d=" + url_streaming_community
                         if quality_sc == "1080":
-                            streams['streams'].append({"name":f'{Name}\n1080p Max', 'title': f'{Icon}StreamingCommunity\n {slug_sc.replace("-"," ").capitalize()}','url': url_streaming_community,'behaviorHints': {'proxyHeaders': {"request": {"user-agent": User_Agent}}, 'notWebReady': True, 'bingeGroup': 'streamingcommunity1080'}})
+                            streams['streams'].append({"name":f'{Name}\n1080p Max', 'title': f'{Icon}StreamingCommunity\n {slug_sc.replace("-"," ").capitalize()}','url': url_streaming_community,'behaviorHints': {'proxyHeaders': {"request": {"user-agent": User_Agent, "Accept":"*/*", "Accept-Language": "en-US,en;q=0.5", "Accept-Encoding": "gzip, deflate, br, zstd", "Origin": "https://livepush.io", "Referer": "https://livepush.io/","DNT": "1", "Sec-GPC": "1", "Connection": "keep-alive", "Sec-Fetch-Dest": "empty","Sec-Fetch-Mode": "cors","Sec-Fetch-Site": "cross-site","Pragma": "no-cache","Cache-Control": "no-cache"}}, 'notWebReady': True, 'bingeGroup': 'streamingcommunity1080'}})
                         else:
                             streams['streams'].append({"name":f'{Name}\n{quality} Max', 'title': f'{Icon}StreamingCommunity\n {slug_sc.replace("-"," ").capitalize()}','url': url_streaming_community,'behaviorHints': {'proxyHeaders': {"request": {"user-agent": User_Agent}}, 'notWebReady': True, 'bingeGroup': f'streamingcommunity{quality}'}})
                 if provider_maps['LORDCHANNEL'] == "1" and LC == "1":

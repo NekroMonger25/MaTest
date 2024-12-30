@@ -21,3 +21,19 @@ async def clone_m3u8(d: str = None):
         except Exception as e:
             print(f"Failed to fetch M3U8 file: {e}")
             raise HTTPException(status_code=404, detail="M3U8 content not found")
+#This is just for testing, ignore that endpoint and the func
+
+
+@router.api_route("/vixcloud/manifest.m3u8", methods=["GET", "HEAD"])
+async def clone2_m3u8(d:str,token:str,expires:str,h:str = None):
+    try:
+        if h:
+            m3u8 = f'{d}?token={token}&expires={expires}&h={h}'
+        else:
+            m3u8 = f'{d}?token={token}&expires={expires}'
+        print(m3u8)
+        m3u8_content = await fetch_m3u8(m3u8)
+        return Response(content=m3u8_content, media_type='application/vnd.apple.mpegurl')
+    except Exception as e:
+        print(f"Failed to fetch M3U8 file: {e}")
+        raise HTTPException(status_code=404, detail="M3U8 content not found")
