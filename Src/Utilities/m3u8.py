@@ -25,13 +25,13 @@ async def clone_m3u8(d: str = None):
 
 
 @router.api_route("/vixcloud/manifest.m3u8", methods=["GET", "HEAD"])
-async def clone2_m3u8(d:str,token:str,expires:str,h:str = None):
+async def clone2_m3u8(d:str,token:str,expires:str,h:str = None, b:str = None):
     try:
+        m3u8 = f'{d}?token={token}&expires={expires}'
         if h:
-            m3u8 = f'{d}?token={token}&expires={expires}&h={h}'
-        else:
-            m3u8 = f'{d}?token={token}&expires={expires}'
-        print(m3u8)
+            m3u8 = m3u8 + f'&h={h}'
+        if b:
+            m3u8 = m3u8 + f'&b={b}'
         m3u8_content = await fetch_m3u8(m3u8)
         return Response(content=m3u8_content, media_type='application/vnd.apple.mpegurl')
     except Exception as e:
